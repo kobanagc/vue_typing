@@ -9,6 +9,78 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
 </head>
 <body>
-  
+  <div class="container" id="app">
+    <div class="title">
+      <h1>Typing Game</h1>
+      <div class="marker"></div>
+    </div>
+    <button v-if="startFlag!=true" class="startButton mb-20" @click="gameStart">START</button>
+    <div v-if="startFlag">
+      <div class="question mb-20">{{current_question}}</div>
+      <div v-if="current_question_counts == question_counts" class="clear">Clear!</div>
+      <div class="typeFormWrapper mb-20">
+        <input id="typeForm" v-model="typeBox" type="text" class="typeForm">
+      </div>
+      <div class="gaugeWrapper mb-20">
+        <div v-bind:style="styleObject" class="gauge"></div>
+      </div>
+      <div>{{current_question_counts}}/{{question_counts}}</div>
+    </div>
+  </div>
+  <script>
+    new Vue({
+      el: "#app",
+      data:{
+        startFlag:"",
+        current_question:"",
+        questions:[
+          'apple',
+          'banana',
+          'chocolate',
+          'donut',
+          'espresso',
+        ],
+        typeBox:"",
+        current_question_counts:0,
+        question_counts:0,
+      },
+      computed:{
+        styleObject:function(){
+          width = 20 * this.current_question_counts + "%"
+          if(this.current_question_counts == 5) {
+            color = "#03a9f4"
+          } else {
+            color = "orange"
+          }
+          return {
+            'width' :width,
+            'background-color': color,
+          }
+        }
+      },
+      methods:{
+        gameStart:function(){
+          this.startFlag = true;
+          this.$nextTick(function(){
+            document.getElementById('typeForm').focus()
+          })
+        }
+      },
+      mounted:function(){
+        this.current_question = this.questions[0]
+        this.question_counts = this.questions.length
+      },
+      watch:{
+        typeBox:function(e){
+          if(e == this.current_question){
+            this.questions.splice(0,1)
+            this.current_question = this.questions[0]
+            this.typeBox = ""
+            this.current_question_counts += 1
+          }
+        }
+      }
+    })
+  </script>
 </body>
 </html>
